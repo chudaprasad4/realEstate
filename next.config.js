@@ -1,6 +1,7 @@
 module.exports = {
   reactStrictMode: true,
   images:{
-    domains:['bayut-production.s3.eu-central-1.amazonaws.com', 'placehold.co']
+    domains:['bayut-production.s3.eu-central-1.amazonaws.com', 'placehold.co'],
+    unoptimized: true
 },
 }
