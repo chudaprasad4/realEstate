@@ -6,12 +6,16 @@ export default async function handler(req, res) {
     if (!apiKey) {
       return res.status(500).json({ error: 'RapidAPI key not configured' });
     }
-    const path = req.url.replace(/^\/api\/bayut/, '');
-    const targetUrl = `https://bayut.p.rapidapi.com${path}`;
+
+    // Preserve full path and query after /api/bayut
+    const pathAndQuery = req.url.replace(/^\/api\/bayut/, '');
+    const targetUrl = `https://bayut.p.rapidapi.com${pathAndQuery}`;
 
     const { method, headers } = req;
     const allowedHeaders = ['content-type'];
-    const forwardHeaders = Object.fromEntries(Object.entries(headers).filter(([k]) => allowedHeaders.includes(k.toLowerCase())));
+    const forwardHeaders = Object.fromEntries(
+      Object.entries(headers).filter(([k]) => allowedHeaders.includes(k.toLowerCase()))
+    );
 
     const response = await axios({
       url: targetUrl,
@@ -27,7 +31,6 @@ export default async function handler(req, res) {
 
     res.status(response.status).json(response.data);
   } catch (e) {
-    // eslint-disable-next-line no-console
     if (process.env.NODE_ENV !== 'production') console.error('Proxy error', e.message);
     res.status(500).json({ error: 'Proxy request failed' });
   }
