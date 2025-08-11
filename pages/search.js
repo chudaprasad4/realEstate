@@ -7,9 +7,9 @@ import { BsFilter } from 'react-icons/bs';
 import Property from '../components/Property';
 import SearchFilters from '../components/SearchFilters';
 import { baseUrl, fetchApi } from '../utils/fetchApi';
-import noresult from '../assets/images/noresult.svg'
+// Use remote placeholder to avoid importing local asset that may trigger squoosh WASM
 
-const Search = ({ properties }) => {
+const Search = ({ properties = [] }) => {
   const [searchFilters, setSearchFilters] = useState(false);
   const router = useRouter();
 
@@ -39,7 +39,7 @@ const Search = ({ properties }) => {
       </Flex>
       {properties.length === 0 && (
         <Flex justifyContent='center' alignItems='center' flexDir='column' marginTop='5' marginBottom='5'>
-          <Image src={noresult} />
+          <Image src={'https://placehold.co/300x200?text=No+Result'} width={300} height={200} />
           <Text fontSize='xl' marginTop='3'>No Result Found.</Text>
         </Flex>
       )}
@@ -59,11 +59,11 @@ export async function getServerSideProps({ query }) {
   const locationExternalIDs = query.locationExternalIDs || '5002';
   const categoryExternalID = query.categoryExternalID || '4';
 
-  const data = await fetchApi(`${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}`);
+  const data = (await fetchApi(`${baseUrl}/properties/list?locationExternalIDs=${locationExternalIDs}&purpose=${purpose}&categoryExternalID=${categoryExternalID}&bathsMin=${bathsMin}&rentFrequency=${rentFrequency}&priceMin=${minPrice}&priceMax=${maxPrice}&roomsMin=${roomsMin}&sort=${sort}&areaMax=${areaMax}`)) || { hits: [] };
 
   return {
     props: {
-      properties: data?.hits,
+      properties: Array.isArray(data?.hits) ? data.hits : [],
     },
   };
 }

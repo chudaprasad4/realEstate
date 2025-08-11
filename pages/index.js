@@ -20,7 +20,7 @@ export const Banner = ({ purpose, title1, title2, desc1, desc2, buttonText, link
 );
 
 
-const Home = ({ propertiesForSale, propertiesForRent }) => (
+const Home = ({ propertiesForSale = [], propertiesForRent = [] }) => (
   <Box>
     <Banner
       purpose='RENT A HOME'
@@ -57,8 +57,8 @@ export async function getStaticProps() {
 
   return {
     props: {
-      propertiesForSale: propertyForSale?.hits,
-      propertiesForRent: propertyForRent?.hits,
+      propertiesForSale: propertyForSale?.hits || [],
+      propertiesForRent: propertyForRent?.hits || [],
     },
   };
 }
